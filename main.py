@@ -1,16 +1,12 @@
-# This is a sample Python script.
+from dataloader.Dataloader import Dataloader
+import pandas as pd
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+FAKE_DATA_PATH = './data/Fake.csv'
+TRUE_DATA_PATH = './data/True.csv'
 
+pd.set_option('display.max_columns', 4)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    true_data, fake_data = Dataloader.get_data(TRUE_DATA_PATH, FAKE_DATA_PATH)
+    true_data_tokenized = Dataloader.preprocess_data(true_data)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
