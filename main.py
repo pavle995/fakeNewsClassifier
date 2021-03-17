@@ -8,5 +8,5 @@ pd.set_option('display.max_columns', 4)
 
 if __name__ == '__main__':
     true_data, fake_data = Dataloader.get_data(TRUE_DATA_PATH, FAKE_DATA_PATH)
-    true_data_tokenized = Dataloader.preprocess_data(true_data)
+    true_data_tokenized = Dataloader.preprocess_data(true_data, fake_data)
 

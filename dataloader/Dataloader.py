@@ -1,5 +1,7 @@
 import pandas as pd
 from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+import numpy as np
 
 
 class Dataloader:
@@ -13,11 +15,35 @@ class Dataloader:
         return true_data, fake_data
 
     @staticmethod
-    def preprocess_data(dataset):
+    def preprocess_data(true_data, fake_data):
+        true_indices = np.arange(true_data.shape[0])
+        fake_indices = np.arange(start=(true_indices[-1]+1),stop=true_data.shape[0]+fake_data.shape[0])
+        indices = np.concatenate([true_indices, fake_indices])
+        true_labels = np.zeros(true_data.shape[0])
+        fake_labels = np.ones(fake_data.shape[0])
+        labels = np.concatenate([true_labels, fake_labels])
+        true_data = Dataloader.tokenize_data(true_data)
+        fake_data = Dataloader.tokenize_data(fake_data)
+        dataset = np.concatenate([true_data, fake_data])
+        np.random.shuffle(indices)
+        dataset = dataset[indices]
+        labels = labels[indices]
+        return dataset, labels
+
+    @staticmethod
+    def add_label(dataset, label):
+        num_of_texts = dataset.shape[0]
+        num_of_words = dataset.shape[1]
+        labels = np.full((num_of_texts,1, 1), label)
+        dataset = np.reshape(dataset, (num_of_texts, 1, num_of_words))
+        print(dataset)
+        return np.append(dataset, labels, axis=1)
+
+    @staticmethod
+    def tokenize_data(dataset):
         tokenizer = Tokenizer(num_words=1000)
         tokenizer.fit_on_texts(dataset)
 
-        one_hot_results = tokenizer.texts_to_matrix(dataset, mode='binary')
-        #word_index = tokenizer.word_index
-        print(one_hot_results)
-        return one_hot_results
+        sequences = tokenizer.texts_to_sequences(dataset)
+        data = pad_sequences(sequences, 110)
+        return data
